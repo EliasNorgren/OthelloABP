@@ -83,7 +83,7 @@ public class OthelloPosition {
      * moves in the position. If the list is empty, there are no legal moves for the
      * player who has the move.
      */
-    public LinkedList getMoves() {
+    public LinkedList<OthelloAction> getMoves() {
         boolean[][] candidates = new boolean[BOARD_SIZE][BOARD_SIZE];
         LinkedList<OthelloAction> moves = new LinkedList<OthelloAction>();
         for (int i = 0; i < BOARD_SIZE; i++)
@@ -306,9 +306,7 @@ public class OthelloPosition {
      * Check if the position is free/empty
      */
     private boolean isFree(int row, int column) {
-        if (board[row][column] == 'E')
-            return true;
-        return false;
+        return board[row][column] == 'E';
     }
 
     /* toMove */
@@ -329,6 +327,15 @@ public class OthelloPosition {
         /*
          * TODO: write the code for this method and whatever helper functions it needs.
          */
+
+        if(action.isPassMove()){
+            this.maxPlayer = !this.maxPlayer;
+            return clone();
+        }
+        OthelloPosition pos = this.clone();
+        pos.board[action.row][action.column] = this.maxPlayer ? 'W' : 'B';
+        pos.maxPlayer = !pos.maxPlayer;
+        return pos;
     }
 
     /**
@@ -407,4 +414,16 @@ public class OthelloPosition {
         return s;
     }
 
+    public boolean isFinished() {
+
+        for(int i = 1; i <= 8; i++){
+            for(int j = 1; j <= 8; j++){
+                if(this.board[i][j] == 'W'){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
