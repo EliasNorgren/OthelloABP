@@ -14,21 +14,22 @@ public class Main {
 
         OthelloPosition p = new OthelloPosition();
         p.initialize();
-
+        p.illustrate();
         Scanner scanner = new Scanner(System.in);
 
         int i = 0;
         OthelloAction ac;
-        while(!p.isFinished()){
-            p.illustrate();
+        while(i <= 4){
+
             if(i % 2 == 0){
                 ac = alg2.evaluate(p);
             }else{
                 ac = alg1.evaluate(p);
             }
             p = p.makeMove(ac);
+            p.illustrate();
             i++;
-            scanner.nextLine();
+            //scanner.nextLine();
         }
     }
 }

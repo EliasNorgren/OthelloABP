@@ -333,9 +333,202 @@ public class OthelloPosition {
             return clone();
         }
         OthelloPosition pos = this.clone();
-        pos.board[action.row][action.column] = this.maxPlayer ? 'W' : 'B';
+        char marker = this.maxPlayer ? 'W' : 'B';
+        pos.board[action.row][action.column] = marker;
+
+        if(eligibleSouth(pos, action)) {
+            int row = action.row + 1;
+            while (row <= 8 && this.isOpponentSquare(row, action.column)) {
+                pos.board[row][action.column] = marker;
+                row++;
+            }
+        }
+
+        if(eligibleSouthWest(pos, action)){
+            int row = action.row + 1;
+            int col = action.column - 1;
+            while(row <= 8 && col >= 1 && pos.isOpponentSquare(row, col)){
+                pos.board[row][col] = marker;
+                row ++;
+                col --;
+            }
+        }
+
+        if(eligibleSouthEast(pos, action)){
+            int row = action.row + 1;
+            int col = action.column + 1;
+            while(row <= 8 && col <= 8 && pos.isOpponentSquare(row, col)){
+                pos.board[row][col] = marker;
+                row ++;
+                col ++;
+            }
+        }
+
+        if(eligibleEast(pos, action)){
+            int col = action.column + 1;
+            while(col <= 8 && pos.isOpponentSquare(action.row, col)){
+                pos.board[action.row][col] = marker;
+                col ++;
+            }
+        }
+
+        if(eligibleNorthEast(pos, action)){
+            int row = action.row - 1;
+            int col = action.column + 1;
+            while(row >= 1 && col <= 8 && pos.isOpponentSquare(row, col)){
+                pos.board[row][col] = marker;
+                row --;
+                col ++;
+            }
+        }
+
+        if(eligibleWest(pos, action)){
+            int col = action.column - 1;
+            while(col >= 1 && pos.isOpponentSquare(action.row, col)){
+                pos.board[action.row][col] = marker;
+                col --;
+            }
+        }
+
+        if(eligibleNorthWest(pos, action)){
+            int row = action.row - 1;
+            int col = action.column - 1;
+            while(row >= 1 && col >= 1){
+                pos.board[row][col] = marker;
+                row --;
+                col --;
+            }
+        }
+
+        if(eligibleNorth(pos, action)){
+            int row = action.row - 1;
+            while(row >= 1){
+                pos.board[row][action.column] = marker;
+                row --;
+            }
+        }
+
         pos.maxPlayer = !pos.maxPlayer;
         return pos;
+    }
+
+    private boolean eligibleNorth(OthelloPosition pos, OthelloAction action) {
+        int row = action.row - 1;
+        if(row >= 1 && pos.isOwnSquare(row, action.column)){
+            return false;
+        }
+        while(row >= 1){
+            if(pos.isOwnSquare(row, action.column)){
+                return true;
+            }
+            row --;
+        }
+        return false;
+    }
+
+    private boolean eligibleNorthWest(OthelloPosition pos, OthelloAction action) {
+        int row = action.row - 1;
+        int col = action.column - 1;
+        if(row >= 1 && col >= 1 && pos.isOwnSquare(row, col)){
+            return false;
+        }
+        while(row >= 1 && col >= 1){
+            if(pos.isOwnSquare(row, col)){
+                return true;
+            }
+            row --;
+            col --;
+        }
+        return false;
+    }
+
+    private boolean eligibleWest(OthelloPosition pos, OthelloAction action) {
+        int col = action.column - 1;
+        if(col >= 1 && pos.isOwnSquare(action.row, col)){
+            return false;
+        }
+        for(int c = col; c >= 1; c --){
+            if(pos.isOwnSquare(action.row, c)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean eligibleNorthEast(OthelloPosition pos, OthelloAction action) {
+        int row = action.row - 1;
+        int col = action.column + 1;
+        if(row >= 1 && col <= 8 && pos.isOwnSquare(row, col)){
+            return false;
+        }
+        while(row >= 1 && col <= 8){
+            if(pos.isOwnSquare(row, col)){
+                return true;
+            }
+            row --;
+            col ++;
+        }
+        return false;
+    }
+
+    private boolean eligibleEast(OthelloPosition pos, OthelloAction action) {
+        int col = action.column + 1;
+        if(col <= 8 && pos.isOwnSquare(action.row, col)){
+            return false;
+        }
+        for(int c = col; c <= 8; c++){
+            if(pos.isOwnSquare(action.row, c)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean eligibleSouthEast(OthelloPosition pos, OthelloAction action) {
+        int row = action.row + 1;
+        int col = action.column + 1;
+
+        if(row <= 8 && col <= 8 && pos.isOwnSquare(row, col)){
+            return false;
+        }
+
+        while(row <= 8 && col <= 8){
+            if(pos.isOwnSquare(row, col)){
+                return true;
+            }
+            row ++;
+            col ++;
+        }
+        return false;
+    }
+
+    private boolean eligibleSouthWest(OthelloPosition pos, OthelloAction action) {
+        int row = action.row + 1;
+        int col = action.column - 1;
+        if(row <= 8 && col >= 1 && pos.isOwnSquare(row, col)){
+            return false;
+        }
+        while(row <= 8 && col >= 1){
+            if(pos.isOwnSquare(row, col)){
+                return true;
+            }
+            row ++;
+            col --;
+        }
+        return false;
+    }
+
+    private boolean eligibleSouth(OthelloPosition pos, OthelloAction action) {
+        int row = action.row + 1;
+        if(row <= 8 && pos.isOwnSquare(row, action.column)){
+            return false;
+        }
+        for(int r = row; r <= 8; r++){
+            if(isOwnSquare(r, action.column)){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -415,7 +608,6 @@ public class OthelloPosition {
     }
 
     public boolean isFinished() {
-
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
                 if(this.board[i][j] == 'W'){
@@ -423,7 +615,6 @@ public class OthelloPosition {
                 }
             }
         }
-
         return true;
     }
 }

@@ -11,7 +11,7 @@ public class Algorithm implements OthelloAlgorithm{
     @Override
     public OthelloAction evaluate(OthelloPosition position) throws IllegalMoveException {
 
-        int max = -1;
+        int max = Integer.MIN_VALUE;
         OthelloAction maxAction = null;
         for(OthelloAction ac : position.getMoves()){
             OthelloPosition p = position.makeMove(ac);
@@ -20,6 +20,9 @@ public class Algorithm implements OthelloAlgorithm{
                 max = val;
                 maxAction = ac;
             }
+        }
+        if(maxAction == null){
+            throw new NullPointerException("MaxAction not found");
         }
         return maxAction;
     }
