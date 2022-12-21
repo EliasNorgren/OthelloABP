@@ -393,7 +393,7 @@ public class OthelloPosition {
         if(eligibleNorthWest(pos, action)){
             int row = action.row - 1;
             int col = action.column - 1;
-            while(row >= 1 && col >= 1){
+            while(row >= 1 && col >= 1 && pos.isOpponentSquare(row, col)){
                 pos.board[row][col] = marker;
                 row --;
                 col --;
@@ -402,7 +402,7 @@ public class OthelloPosition {
 
         if(eligibleNorth(pos, action)){
             int row = action.row - 1;
-            while(row >= 1){
+            while(row >= 1 && pos.isOpponentSquare(row, action.column)){
                 pos.board[row][action.column] = marker;
                 row --;
             }
@@ -414,7 +414,7 @@ public class OthelloPosition {
 
     private boolean eligibleNorth(OthelloPosition pos, OthelloAction action) {
         int row = action.row - 1;
-        if(row >= 1 && pos.isOwnSquare(row, action.column)){
+        if(row >= 1 && pos.isOwnSquare(row, action.column) && !pos.isFree(row, action.column)){
             return false;
         }
         while(row >= 1){
@@ -429,7 +429,7 @@ public class OthelloPosition {
     private boolean eligibleNorthWest(OthelloPosition pos, OthelloAction action) {
         int row = action.row - 1;
         int col = action.column - 1;
-        if(row >= 1 && col >= 1 && pos.isOwnSquare(row, col)){
+        if(row >= 1 && col >= 1 && pos.isOwnSquare(row, col) && !pos.isFree(row, col)){
             return false;
         }
         while(row >= 1 && col >= 1){
@@ -444,7 +444,7 @@ public class OthelloPosition {
 
     private boolean eligibleWest(OthelloPosition pos, OthelloAction action) {
         int col = action.column - 1;
-        if(col >= 1 && pos.isOwnSquare(action.row, col)){
+        if(col >= 1 && pos.isOwnSquare(action.row, col) && !pos.isFree(action.row, col)){
             return false;
         }
         for(int c = col; c >= 1; c --){
@@ -458,7 +458,7 @@ public class OthelloPosition {
     private boolean eligibleNorthEast(OthelloPosition pos, OthelloAction action) {
         int row = action.row - 1;
         int col = action.column + 1;
-        if(row >= 1 && col <= 8 && pos.isOwnSquare(row, col)){
+        if(row >= 1 && col <= 8 && pos.isOwnSquare(row, col)  && !pos.isFree(row, col)){
             return false;
         }
         while(row >= 1 && col <= 8){
@@ -473,7 +473,7 @@ public class OthelloPosition {
 
     private boolean eligibleEast(OthelloPosition pos, OthelloAction action) {
         int col = action.column + 1;
-        if(col <= 8 && pos.isOwnSquare(action.row, col)){
+        if(col <= 8 && pos.isOwnSquare(action.row, col) && !pos.isFree(action.row, col)){
             return false;
         }
         for(int c = col; c <= 8; c++){
@@ -488,7 +488,7 @@ public class OthelloPosition {
         int row = action.row + 1;
         int col = action.column + 1;
 
-        if(row <= 8 && col <= 8 && pos.isOwnSquare(row, col)){
+        if(row <= 8 && col <= 8 && pos.isOwnSquare(row, col) && !pos.isFree(row, col)){
             return false;
         }
 
@@ -505,7 +505,7 @@ public class OthelloPosition {
     private boolean eligibleSouthWest(OthelloPosition pos, OthelloAction action) {
         int row = action.row + 1;
         int col = action.column - 1;
-        if(row <= 8 && col >= 1 && pos.isOwnSquare(row, col)){
+        if(row <= 8 && col >= 1 && pos.isOwnSquare(row, col) && !pos.isFree(row, col)){
             return false;
         }
         while(row <= 8 && col >= 1){
@@ -520,7 +520,7 @@ public class OthelloPosition {
 
     private boolean eligibleSouth(OthelloPosition pos, OthelloAction action) {
         int row = action.row + 1;
-        if(row <= 8 && pos.isOwnSquare(row, action.column)){
+        if(row <= 8 && pos.isOwnSquare(row, action.column) && !pos.isFree(row, action.column)){
             return false;
         }
         for(int r = row; r <= 8; r++){
