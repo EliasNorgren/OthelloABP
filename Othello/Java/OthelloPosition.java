@@ -608,6 +608,24 @@ public class OthelloPosition {
     }
 
     public boolean isFinished() {
+
+        int black = 0;
+        int white = 0;
+        for(int i = 1; i <= 8; i++){
+            for(int j = 1; j <= 8; j++){
+                if(this.board[i][j] == 'W'){
+                    white ++;
+                }
+                if(this.board[i][j] == 'B'){
+                    black ++;
+                }
+            }
+        }
+
+        if(black == 0 || white == 0){
+            return true;
+        }
+
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
                 if(this.board[i][j] == 'W'){
