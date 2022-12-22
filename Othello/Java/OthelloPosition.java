@@ -328,6 +328,8 @@ public class OthelloPosition {
          * TODO: write the code for this method and whatever helper functions it needs.
          */
 
+
+
         if(action.isPassMove()){
             this.maxPlayer = !this.maxPlayer;
             return clone();
@@ -336,12 +338,19 @@ public class OthelloPosition {
         char marker = this.maxPlayer ? 'W' : 'B';
         pos.board[action.row][action.column] = marker;
 
+        if(!pos.hasNeighbor(action.row, action.column)){
+            throw new IllegalMoveException(action);
+        }
+
+        boolean eligibleSomeDir = false;
+
         if(eligibleSouth(pos, action)) {
             int row = action.row + 1;
             while (row <= 8 && this.isOpponentSquare(row, action.column)) {
                 pos.board[row][action.column] = marker;
                 row++;
             }
+            eligibleSomeDir = true;
         }
 
         if(eligibleSouthWest(pos, action)){
@@ -352,6 +361,7 @@ public class OthelloPosition {
                 row ++;
                 col --;
             }
+            eligibleSomeDir = true;
         }
 
         if(eligibleSouthEast(pos, action)){
@@ -362,6 +372,7 @@ public class OthelloPosition {
                 row ++;
                 col ++;
             }
+            eligibleSomeDir = true;
         }
 
         if(eligibleEast(pos, action)){
@@ -370,6 +381,7 @@ public class OthelloPosition {
                 pos.board[action.row][col] = marker;
                 col ++;
             }
+            eligibleSomeDir = true;
         }
 
         if(eligibleNorthEast(pos, action)){
@@ -380,6 +392,7 @@ public class OthelloPosition {
                 row --;
                 col ++;
             }
+            eligibleSomeDir = true;
         }
 
         if(eligibleWest(pos, action)){
@@ -388,6 +401,7 @@ public class OthelloPosition {
                 pos.board[action.row][col] = marker;
                 col --;
             }
+            eligibleSomeDir = true;
         }
 
         if(eligibleNorthWest(pos, action)){
@@ -398,6 +412,7 @@ public class OthelloPosition {
                 row --;
                 col --;
             }
+            eligibleSomeDir = true;
         }
 
         if(eligibleNorth(pos, action)){
@@ -406,8 +421,11 @@ public class OthelloPosition {
                 pos.board[row][action.column] = marker;
                 row --;
             }
+            eligibleSomeDir = true;
         }
-
+        if (!eligibleSomeDir){
+            throw new IllegalMoveException(action);
+        }
         pos.maxPlayer = !pos.maxPlayer;
         return pos;
     }
