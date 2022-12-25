@@ -22,7 +22,7 @@ public class Controller {
         alg.setEvaluator(new Evaluator());
         gui.setListeners(new OthelloListener());
         System.out.println(pos.maxPlayer);
-        pos.illustrate();
+       // pos.illustrate();
 
     }
 
@@ -37,7 +37,7 @@ public class Controller {
                 System.out.println("YOU : " + pos.maxPlayer);
                 pos = pos.makeMove(new OthelloAction(button.getCoordinate().getRow(), button.getCoordinate().getCol()));
                 gui.draw(pos.board.clone());
-                pos.illustrate();
+               // pos.illustrate();
             } catch (IllegalMoveException e) {
                 System.out.println("Illegal move");
 //                pos.illustrate();
@@ -78,6 +78,7 @@ public class Controller {
                 System.out.println("AB Prunes : " + alg.ABPrunes);
                 System.out.println("Doing move (" + ac.row + " , " + ac.column + ")\nIteration: " + i);
                 System.out.println("Board value: " + eval.evaluate(pos));
+                System.out.println("Tabulations: " + alg.tabulations);
 
             } catch (IllegalMoveException | ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);

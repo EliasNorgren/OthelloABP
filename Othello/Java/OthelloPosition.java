@@ -28,6 +28,21 @@ public class OthelloPosition {
      */
     protected char[][] board;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OthelloPosition that = (OthelloPosition) o;
+        return maxPlayer == that.maxPlayer && Arrays.equals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(maxPlayer);
+        result = 31 * result + Arrays.hashCode(board);
+        return result;
+    }
+
     /** Creates a new position and sets all squares to empty. */
     public OthelloPosition() {
         board = new char[BOARD_SIZE + 2][BOARD_SIZE + 2];
