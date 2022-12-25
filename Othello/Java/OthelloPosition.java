@@ -640,7 +640,7 @@ public class OthelloPosition {
             }
         }
 
-        if(black == 0 || white == 0){
+        if(black == 0 || white == 0 || white + black == 64){
             return true;
         }
 
