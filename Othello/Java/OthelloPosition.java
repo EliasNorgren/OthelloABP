@@ -16,6 +16,8 @@ public class OthelloPosition {
     /** True if the first player (white) has the move. */
     protected boolean maxPlayer;
 
+    public int value;
+
     /**
      * The representation of the board. For convenience, the array actually has two
      * columns and two rows more that the actual game board. The 'middle' is used
@@ -33,13 +35,13 @@ public class OthelloPosition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OthelloPosition that = (OthelloPosition) o;
-        return maxPlayer == that.maxPlayer && Arrays.equals(board, that.board);
+        return maxPlayer == that.maxPlayer && Arrays.deepEquals(board, that.board);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(maxPlayer);
-        result = 31 * result + Arrays.hashCode(board);
+        result = 31 * result + Arrays.deepHashCode(board);
         return result;
     }
 
@@ -345,6 +347,7 @@ public class OthelloPosition {
 
 
 
+
         if(action.isPassMove()){
             this.maxPlayer = !this.maxPlayer;
             return clone();
@@ -352,6 +355,12 @@ public class OthelloPosition {
         OthelloPosition pos = this.clone();
         char marker = this.maxPlayer ? 'W' : 'B';
         pos.board[action.row][action.column] = marker;
+
+        LinkedList<OthelloAction> actions = this.getMoves();
+        if(!actions.contains(action)){
+            System.out.println("Not in make move " + action);
+            throw new IllegalMoveException(action);
+        }
 
         if(!pos.hasNeighbor(action.row, action.column)){
             throw new IllegalMoveException(action);
