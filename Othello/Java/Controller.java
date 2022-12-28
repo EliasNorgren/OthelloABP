@@ -18,7 +18,7 @@ public class Controller {
     public Controller(GUI gui){
         this.gui = gui;
         this.pos.initialize();
-        alg.setSearchDepth(100000);
+        alg.setSearchDepth(30);
         alg.TIME_LIMIT = 10000;
         alg.setEvaluator(new Evaluator());
         gui.setListeners(new OthelloListener());
@@ -63,6 +63,8 @@ public class Controller {
                 System.out.println("Doing move (" + ac.row + " , " + ac.column + ")\nIteration: " + i);
                 System.out.println("Board value: " + eval.evaluate(pos));
                 System.out.println("Tabulations: " + alg.tabulations);
+                System.out.println("Depth: " + alg.depth);
+                System.out.println("Table size: " + alg.tableSize);
                 System.out.println("-------------------------------------");
 
 

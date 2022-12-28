@@ -18,6 +18,8 @@ public class OthelloPosition {
 
     public int value;
 
+    public int depth;
+
     /**
      * The representation of the board. For convenience, the array actually has two
      * columns and two rows more that the actual game board. The 'middle' is used
@@ -35,12 +37,12 @@ public class OthelloPosition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OthelloPosition that = (OthelloPosition) o;
-        return maxPlayer == that.maxPlayer && Arrays.deepEquals(board, that.board);
+        return maxPlayer == that.maxPlayer && depth == that.depth && Arrays.deepEquals(board, that.board);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(maxPlayer);
+        int result = Objects.hash(maxPlayer, depth);
         result = 31 * result + Arrays.deepHashCode(board);
         return result;
     }

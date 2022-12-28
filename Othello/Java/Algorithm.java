@@ -8,6 +8,8 @@ public class Algorithm implements OthelloAlgorithm{
 
     private int MAX_DEPTH;
     public int TIME_LIMIT = 10000;
+    public int depth;
+    public int tableSize;
 
 
 
@@ -23,118 +25,107 @@ public class Algorithm implements OthelloAlgorithm{
         AlphaBeta ab = new AlphaBeta();
         ABPrunes = 0;
         tabulations = 0;
+        this.depth = 0;
+        this.tableSize = 0;
 
         long start = System.currentTimeMillis();
         HashMap<OthelloPosition, Integer> table = new HashMap<>();
-        int depth = 5;
         OthelloAction bestAction = null;
 
-        if(position.maxPlayer){
-            //   maxAction = alphaMax(depth, position.clone(), ab, maxTable, minTable);
-            int max = Integer.MIN_VALUE;
-            for(int i = 5; i < MAX_DEPTH && (System.currentTimeMillis() - start < 10000); i++){
-                for (OthelloAction ac : position.getMoves()) {
-                    OthelloPosition pos = position.makeMove(ac);
-                    int val = alphaMax(i, pos, ab, table);
-                    max = Math.max(max, val);
-                    if (val >= max) {
-                        bestAction = ac;
-                    }
-                }
-                depth = i;
-            }
-        }else{
-            int min = Integer.MAX_VALUE;
-            for(int i = 0; i < MAX_DEPTH && (System.currentTimeMillis() - start < 10000); i++){
-                for (OthelloAction ac : position.getMoves()) {
-                    OthelloPosition pos = position.makeMove(ac);
-                    int val = alphaMin(i, pos, ab, table);
-                    min = Math.min(min, val);
-                    if (val <= min) {
-                        bestAction = ac;
-                    }
-                }
-                depth = i;
-            }
-        }
+        //for(int i = 5; i <= MAX_DEPTH && (System.currentTimeMillis() - start < TIME_LIMIT); i++){
+            bestAction = position.toMove() ? this.alphaMax(12, position, ab, table, Integer.MIN_VALUE, Integer.MAX_VALUE) : this.alphaMin(12, position, ab, table, Integer.MIN_VALUE, Integer.MAX_VALUE);
+          //  this.depth = i;
+            //System.out.println(depth);
+       // }
 
+        this.tableSize = table.size();
 
-        System.out.println("Depth: " + depth);
-        System.out.println("Table size: " + table.size());
-
-        if(bestAction == null){
-            throw new NullPointerException("MaxAction not found");
-        }
         this.ABPrunes = ab.prunes;
         this.tabulations = ab.tabulations;
         return bestAction;
     }
 
-    private int alphaMin(int depth, OthelloPosition position, AlphaBeta ab, HashMap<OthelloPosition, Integer> table) throws IllegalMoveException {
-        if(table.containsKey(position)){
-            ab.tabulations ++;
-            return table.get(position);
-        }
+    private OthelloAction alphaMin(int depth, OthelloPosition position, AlphaBeta ab, HashMap<OthelloPosition, Integer> table,
+                         int alpha, int beta) throws IllegalMoveException {
+        position.depth = depth;
 
         if(depth == 0 || position.isFinished()) {
-            int val = this.evaluator.evaluate(position);
-            if (Runtime.getRuntime().freeMemory() / Runtime.getRuntime().totalMemory() < 1) {
-                table.put(position, val);
-            }
-            return val;
+            OthelloAction ac = new OthelloAction(0,0);
+            ac.value = this.evaluator.evaluate(position);
+//            if ( (float)Runtime.getRuntime().freeMemory() / (float)Runtime.getRuntime().totalMemory() < 0.8) {
+//               table.put(position, ac.value);
+//            }
+            return ac;
         }
+//        if(table.containsKey(position)){
+//            ab.tabulations ++;
+//            OthelloAction temp = new OthelloAction(0,0);
+//            temp.value = table.get(position);
+//            return temp;
+//        }
 
         int min = Integer.MAX_VALUE;
+        OthelloAction bestAction = new OthelloAction(0,0);
+        bestAction.value = min;
         for(OthelloAction ac : position.getMoves()){
-            OthelloPosition p = position.makeMove(ac);
-            int val = alphaMax(depth-1, p, ab, table);
+            OthelloPosition newPos = position.makeMove(ac);
 
-            if( Runtime.getRuntime().freeMemory() / Runtime.getRuntime().totalMemory() < 1){
-                table.put(p, val);
+            OthelloAction evaluatedAction = alphaMax(depth-1, newPos, ab, table, alpha, beta);
+            if(min > evaluatedAction.value){
+                ac.value = evaluatedAction.value;
+                min = evaluatedAction.value;
+                bestAction = ac;
             }
-            min = Math.min(min, val);
-
-            if(val <= ab.alpha){
+            if(min <= alpha){
                 ab.prunes ++;
-                break;
+                ac.value = min;
+                return ac;
             }
-            ab.beta = Math.min(ab.beta, val);
+            beta = Math.min(beta, min);
         }
-        return min;
+        return bestAction;
     }
 
 
-    private int alphaMax(int depth, OthelloPosition position, AlphaBeta ab, HashMap<OthelloPosition, Integer> table) throws IllegalMoveException {
+    private OthelloAction alphaMax(int depth, OthelloPosition position, AlphaBeta ab, HashMap<OthelloPosition, Integer> table,
+                         int alpha, int beta) throws IllegalMoveException {
 
-        if(table.containsKey(position)){
-            ab.tabulations ++;
-            return table.get(position);
-        }
-
+        position.depth = depth;
         if(depth == 0 || position.isFinished()){
-            int val = this.evaluator.evaluate(position);
-            if( Runtime.getRuntime().freeMemory() / Runtime.getRuntime().totalMemory() < 1){
-                table.put(position, val);
-            }
-            return val;
+            OthelloAction ac = new OthelloAction(0,0);
+            ac.value = this.evaluator.evaluate(position);
+//            if( (float)Runtime.getRuntime().freeMemory() / (float)Runtime.getRuntime().totalMemory() < 0.8){
+//               table.put(position, ac.value);
+//            }
+            return ac;
         }
+//        if(table.containsKey(position)){
+//            ab.tabulations ++;
+//            OthelloAction temp = new OthelloAction(0,0);
+//            temp.value = table.get(position);
+//            return temp;
+//        }
 
         int max = Integer.MIN_VALUE;
+        OthelloAction bestAction = new OthelloAction(0,0);
         for(OthelloAction ac : position.getMoves()){
-            OthelloPosition p = position.makeMove(ac);
-            int val = alphaMin(depth-1, p, ab, table);
-            if( Runtime.getRuntime().freeMemory() / Runtime.getRuntime().totalMemory() < 1){
-                table.put(p, val);
+            OthelloPosition newPos = position.makeMove(ac);
+            OthelloAction evaluatedAction = alphaMin(depth-1, newPos, ab, table, alpha, beta);
+            if(max < evaluatedAction.value){
+                ac.value = evaluatedAction.value;
+                max = evaluatedAction.value;
+                bestAction = ac;
             }
-            max = Math.max(max, val);
-
-            if(val >= ab.beta){
+            if(max >= beta){
                 ab.prunes ++;
-                break;
+                ac.value = max;
+                return ac;
             }
-            ab.alpha = Math.max(ab.alpha, val);
+            if(max > alpha){
+                alpha = max;
+            }
         }
-        return max;
+        return bestAction;
     }
 
     @Override
@@ -143,8 +134,8 @@ public class Algorithm implements OthelloAlgorithm{
     }
 
     private static class AlphaBeta{
-        public int alpha = Integer.MIN_VALUE;
-        public int beta = Integer.MAX_VALUE;
+//        public int alpha = Integer.MIN_VALUE;
+//        public int beta = Integer.MAX_VALUE;
         public int prunes;
         public int tabulations = 0;
     }

@@ -113,9 +113,10 @@ public class OthelloAction {
 
     @Override
     public boolean equals(Object obj) {
-        if(! (obj instanceof OthelloAction that)){
+        if(! (obj instanceof OthelloAction)){
             return false;
         }
+        OthelloAction that = (OthelloAction) obj;
         return that.column == this.column && that.row == this.row;
      }
 }
